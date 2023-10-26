@@ -10,7 +10,13 @@
 
     //Fetch live bus data
     fetch('https://prog2700.onrender.com/hrmbuses')
+        .then(response => response.json())
+        .then(data => {
+            // Loop through the data and create markers with rotation
+            data.forEach(bus => {
 
+            });
+        });
 
     // Create a sample marker with rotation
     const sampleMarker = L.rotatedMarker([44.650690, -63.596537], {
