@@ -14,18 +14,20 @@
         .then(data => {
             // Loop through the data and create markers with rotation
             data.forEach(bus => {
+                const { lat, lon, rotationAngle } = bus;
 
+                // Create a sample marker with rotation
+                const rotatedMarker = L.rotatedMarker([44.650690, -63.596537], {
+                    rotationAngle: 45, // Set the rotation angle in degrees
+                    icon: L.icon({
+                        iconUrl: './bus.png',
+                        iconSize: [32, 32]
+                    }),
+                }).addTo(map)
             });
         });
 
-    // Create a sample marker with rotation
-    const sampleMarker = L.rotatedMarker([44.650690, -63.596537], {
-        rotationAngle: 45, // Set the rotation angle in degrees
-        icon: L.icon({
-            iconUrl: './bus.png',
-            iconSize: [32, 32]
-        }),
-    }).addTo(map)
+
 
     L.marker([44.650690, -63.596537]).addTo(map)
         .bindPopup('This is a sample popup. You can put any html structure in this including extra bus data. You can also swap this icon out for a custom icon. A png file has been provided for you to use if you wish.')
