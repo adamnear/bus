@@ -8,6 +8,10 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    //Fetch live bus data
+    fetch('https://prog2700.onrender.com/hrmbuses')
+
+
     // Create a sample marker with rotation
     const sampleMarker = L.rotatedMarker([44.650690, -63.596537], {
         rotationAngle: 45, // Set the rotation angle in degrees
@@ -15,7 +19,7 @@
             iconUrl: './bus.png',
             iconSize: [32, 32]
         }),
-    }).addTo(map);
+    }).addTo(map)
 
     L.marker([44.650690, -63.596537]).addTo(map)
         .bindPopup('This is a sample popup. You can put any html structure in this including extra bus data. You can also swap this icon out for a custom icon. A png file has been provided for you to use if you wish.')
