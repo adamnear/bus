@@ -11,8 +11,10 @@
     // Create a sample marker with rotation
     const sampleMarker = L.rotatedMarker([44.650690, -63.596537], {
         rotationAngle: 45, // Set the rotation angle in degrees
-
-
+        icon: L.icon({
+            iconUrl: './bus.png',
+            iconSize: [32, 32]
+        }),
     })
 
     L.marker([44.650690, -63.596537]).addTo(map)
