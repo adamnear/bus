@@ -10,6 +10,8 @@
 
     // Create a sample marker with rotation
     const sampleMarker = L.rotatedMarker([44.650690, -63.596537], {
+        rotationAngle: 45, // Set the rotation angle in degrees
+
 
     })
 
