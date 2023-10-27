@@ -10,33 +10,36 @@
     }).addTo(map);
 
     //Fetch live bus data
-    fetch('https://prog2700.onrender.com/hrmbuses')
-        .then(response => response.json())
-        .then((data) => {
+    function fetchTransitData() {
+        fetch('https://prog2700.onrender.com/hrmbuses')
+            .then(response => response.json())
+            .then((data) => {
 
-            const filterData = data.entity.filter(
-                (bus) => bus.vehicle.trip.routeId >= 1 && bus.vehicle.trip.routeId <= 10
-            );
+                const filterData = data.entity.filter(
+                    (bus) => bus.vehicle.trip.routeId >= 1 && bus.vehicle.trip.routeId <= 10
+                );
 
 
 
-            const geoJson = geoJSONFromData(filterData);
+                const geoJson = geoJSONFromData(filterData);
 
-            //updateMapWithCustomMarkers(geoJson);
-            console.log(filterData)
-            // data(bus => {
-            //     const { lat, lon, rotationAngle } = bus;
+                //updateMapWithCustomMarkers(geoJson);
+                console.log(filterData)
+                // data(bus => {
+                //     const { lat, lon, rotationAngle } = bus;
 
-            //     // Create a sample marker with rotation
-            //     const rotatedMarker = L.rotatedMarker([44.650690, -63.596537], {
-            //         rotationAngle: 45, // Set the rotation angle in degrees
-            //         icon: L.icon({
-            //             iconUrl: './bus.png',
-            //             iconSize: [32, 32]
-            //         }),
-            //     }).addTo(map)
-            // });
-        });
+                //     // Create a sample marker with rotation
+                //     const rotatedMarker = L.rotatedMarker([44.650690, -63.596537], {
+                //         rotationAngle: 45, // Set the rotation angle in degrees
+                //         icon: L.icon({
+                //             iconUrl: './bus.png',
+                //             iconSize: [32, 32]
+                //         }),
+                //     }).addTo(map)
+                // });
+            });
+    }
+
     function geoJSONFromData(data) {
         return {
             type: "FeatureCollection",
@@ -60,11 +63,24 @@
         };
     }
 
+    function refreshMap() {
+        map.eachLayer((layer) => {
+            if (layer instanceof L.geoJson) {
+                map.removeLayer(layer);
+            }
+        });
+        fetchTransitData();
+    }
 
+    setInterval(refreshMap, 15000);
 
-    L.marker([44.650690, -63.596537]).addTo(map)
-        .bindPopup('bus')
-        .openPopup();
+    const customIcon = L.icon({
+
+    })
+
+    // L.marker([44.650690, -63.596537]).addTo(map)
+    //     .bindPopup('bus')
+    //     .openPopup();
 
 
 })()
