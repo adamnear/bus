@@ -15,6 +15,7 @@
         iconAnchor: [16, 16],
     });
 
+
     // Function to create a GeoJSON object from filtered data
     function geoJSONFromData(data) {
         return {
