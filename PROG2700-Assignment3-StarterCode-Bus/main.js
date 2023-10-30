@@ -18,13 +18,12 @@
                 const filterData = data.entity.filter(
                     (bus) => bus.vehicle.trip.routeId >= 1 && bus.vehicle.trip.routeId <= 10
                 );
-
-
-
-                const geoJson = geoJSONFromData(filterData);
-
-                //updateMapWithCustomMarkers(geoJson);
                 console.log(filterData)
+
+
+                const geoJSON = geoJSONFromData(filterData);
+
+                updateMapWithCustomMarkers(geoJson);
                 // data(bus => {
                 //     const { lat, lon, rotationAngle } = bus;
 
@@ -46,7 +45,7 @@
             features: data.map((bus) => ({
                 type: "Feature",
                 properties: {
-                    bearing: bus.vehicle.position,
+                    bearing: bus.vehicle.position.bearing,
                     route: bus.vehicle.trip.routeId,
                     direction: bus.vehicle.trip.directionId,
                 },
@@ -69,14 +68,39 @@
                 map.removeLayer(layer);
             }
         });
-        fetchTransitData();
+        //Getting the live bus data
+        fetch("https://prog2700.onrender.com/hrmbuses")
+            .then((response) => response.json())
+            .then((data) => {
+                // Filter and transform data
+                const filteredData = data.entity.filter(
+                    (bus) =>
+                        bus.vehicle.trip.routeId >= 1 && bus.vehicle.trip.routeId <= 10
+                );
+                const geoJSON = geoJSONFromData(filteredData);
+
+                updateMapWithCustomMarkers(geoJSON);
+            });
     }
 
     setInterval(refreshMap, 15000);
 
     const customIcon = L.icon({
+        iconUrl: './bus.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+    });
 
-    })
+    function updateMapWithCustomMarkers(geoJSON) {
+        L.geoJSON(geoJSON), {
+            pointToLayer: function (feature, latlng) {
+                return L.marker(latlng, {
+                    icon: customIcon,
+                    rotationAngle: 
+                })
+            }
+        }
+    }
 
     // L.marker([44.650690, -63.596537]).addTo(map)
     //     .bindPopup('bus')
