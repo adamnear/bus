@@ -9,35 +9,29 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    let customIcon = L.icon({
+        iconUrl: './bus.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+    });
+
     //Fetch live bus data
-    function fetchTransitData() {
-        fetch('https://prog2700.onrender.com/hrmbuses')
-            .then(response => response.json())
-            .then((data) => {
-
-                const filterData = data.entity.filter(
-                    (bus) => bus.vehicle.trip.routeId >= 1 && bus.vehicle.trip.routeId <= 10
-                );
-                console.log(filterData)
 
 
-                const geoJSON = geoJSONFromData(filterData);
+    fetch('https://prog2700.onrender.com/hrmbuses')
+        .then(response => response.json())
+        .then((data) => {
 
-                updateMapWithCustomMarkers(geoJson);
-                // data(bus => {
-                //     const { lat, lon, rotationAngle } = bus;
+            const filterData = data.entity.filter(
+                (bus) => bus.vehicle.trip.routeId >= 1 && bus.vehicle.trip.routeId <= 10
+            );
+            console.log(filterData)
 
-                //     // Create a sample marker with rotation
-                //     const rotatedMarker = L.rotatedMarker([44.650690, -63.596537], {
-                //         rotationAngle: 45, // Set the rotation angle in degrees
-                //         icon: L.icon({
-                //             iconUrl: './bus.png',
-                //             iconSize: [32, 32]
-                //         }),
-                //     }).addTo(map)
-                // });
-            });
-    }
+            const geoJSON = geoJSONFromData(filterData);
+
+            updateMapWithCustomMarkers(geoJSON);
+        });
+
 
     function geoJSONFromData(data) {
         return {
@@ -63,11 +57,11 @@
     }
 
     function refreshMap() {
-        map.eachLayer((layer) => {
-            if (layer instanceof L.geoJson) {
-                map.removeLayer(layer);
-            }
-        });
+        // map.eachLayer((layer) => {
+        //     if (layer instanceof L.geoJson) {
+        //         map.removeLayer(layer);
+        //     }
+        // });
         //Getting the live bus data
         fetch("https://prog2700.onrender.com/hrmbuses")
             .then((response) => response.json())
@@ -77,34 +71,32 @@
                     (bus) =>
                         bus.vehicle.trip.routeId >= 1 && bus.vehicle.trip.routeId <= 10
                 );
-                const geoJSON = geoJSONFromData(filteredData);
+                const geoJson = geoJSONFromData(filteredData);
 
-                updateMapWithCustomMarkers(geoJSON);
+                if (geoJsonLayer) {
+                    map.removeLayer(geoJsonLayer);
+                }
+                //GeoJSON being updated with the icon marker
+
+                geoJsonLayer = L.geoJSON(geoJSON, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, {
+                            icon: customIcon,
+                            rotationAngle: feature.properties.bearing,
+                        });
+                    },
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup(
+                            `Route: ${feature.properties.route}<br>Direction: ${feature.properties.direction}`
+                        );
+                    },
+                }).addTo(map);
+            }
             });
-    }
+}
 
-    setInterval(refreshMap, 15000);
 
-    const customIcon = L.icon({
-        iconUrl: './bus.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 16],
-    });
+    setInterval(refreshMap, 3000);
 
-    //GeoJSON being updated with the icon marker
-    function updateMapWithCustomMarkers(geoJSON) {
-        L.geoJSON(geoJSON, {
-            pointToLayer: function (feature, latlng) {
-                return L.marker(latlng, {
-                    icon: customIcon,
-                    rotationAngle: feature.properties.bearing,
-                });
-            },
-            onEachFeature: function (feature, layer) {
-                layer.bindPopup(
-                    `Route: ${feature.properties.route}<br>Direction: ${feature.properties.direction}`
-                );
-            },
-        }).addTo(map);
-    }
-})();
+refreshMap();
+}) ();
