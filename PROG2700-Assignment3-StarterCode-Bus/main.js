@@ -91,20 +91,20 @@
         iconAnchor: [16, 16],
     });
 
+    //GeoJSON being updated with the icon marker
     function updateMapWithCustomMarkers(geoJSON) {
-        L.geoJSON(geoJSON), {
+        L.geoJSON(geoJSON, {
             pointToLayer: function (feature, latlng) {
                 return L.marker(latlng, {
                     icon: customIcon,
-                    rotationAngle: 
-                })
-            }
-        }
+                    rotationAngle: feature.properties.bearing,
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup(
+                    `Route: ${feature.properties.route}<br>Direction: ${feature.properties.direction}`
+                );
+            },
+        }).addTo(map);
     }
-
-    // L.marker([44.650690, -63.596537]).addTo(map)
-    //     .bindPopup('bus')
-    //     .openPopup();
-
-
-})()
+})();
